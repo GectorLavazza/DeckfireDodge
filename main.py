@@ -59,6 +59,8 @@ def main():
                     player.input.x = 1
                 if event.key == pygame.K_SPACE:
                     player.dash()
+                if event.key == pygame.K_LSHIFT:
+                    player.is_sprinting = True
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
@@ -69,6 +71,8 @@ def main():
                     player.input.x = 0
                 if event.key == pygame.K_d:
                     player.input.x = 0
+                if event.key == pygame.K_LSHIFT:
+                    player.is_sprinting = False
 
         screen.fill('black')
 

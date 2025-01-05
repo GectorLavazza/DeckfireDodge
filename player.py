@@ -22,13 +22,19 @@ class Player(Sprite):
         self.health = self.max_health
 
         self.is_dashing = False
+        self.is_sprinting = False
         self.dash_tick = 5
 
     def update(self, dt):
-        if self.is_dashing:
-            self.dash_tick -= dt
-            if self.dash_tick <= 0:
-                self.is_dashing = False
+        if self.is_sprinting:
+            self.speed = 15
+        else:
+            if self.is_dashing:
+                self.dash_tick -= dt
+                if self.dash_tick <= 0:
+                    self.is_dashing = False
+                    self.speed = 10
+            else:
                 self.speed = 10
 
         self.move(dt)
