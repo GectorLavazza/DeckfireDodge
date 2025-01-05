@@ -31,3 +31,27 @@ class Text:
             pos = self.pos
 
         self.screen.blit(self.render, pos)
+
+
+class StaticText:
+    def __init__(self, message, surface, pos, font_size, color='white', center_align=False, right_align=False):
+        self.surface = surface
+        self.font = Font('assets/fonts/PixelOperator8.ttf', font_size)
+        self.pos = pos
+        self.color = color
+        self.center_align = center_align
+        self.right_align = right_align
+
+        self.render = self.font.render(str(message), True, self.color)
+        self.rect = self.render.get_rect()
+
+        if self.center_align:
+            self.pos = (pos[0] - self.render.get_width() // 2,
+                   pos[1])
+        elif self.right_align:
+            self.pos = (pos[0] - self.render.get_width(),
+                   pos[1])
+        else:
+            self.pos = pos
+
+        self.surface.blit(self.render, self.pos)

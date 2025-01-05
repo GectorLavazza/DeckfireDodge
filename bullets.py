@@ -1,7 +1,9 @@
-from pygame.sprite import Group, Sprite
+from random import choice, randint
+
 from pygame import Vector2, Surface
-from settings import SW, SH, CENTER
-from random import choice, choices
+from pygame.sprite import Group, Sprite
+
+from settings import SW, SH
 
 
 class BulletSpawner:
@@ -43,7 +45,10 @@ class BulletSpawner:
             self.create_bullet(pos, (choice(self.x), choice(self.y)))
 
     def create_bullet(self, pos, target_pos):
-        Bullet(pos, target_pos, self, self.group)
+        if randint(1, 100) == 1 and not any([type(s) == Item for s in self.group]):
+            Item(pos, target_pos, self, self.group)
+        else:
+            Bullet(pos, target_pos, self, self.group)
 
 
 class Bullet(Sprite):
@@ -54,12 +59,16 @@ class Bullet(Sprite):
         self.screen_rect = self.spawner.screen.get_rect()
 
         self.image = Surface((20, 20))
-        self.image.fill('red')
+        if randint(1, 10) == 1:
+            self.image.fill('purple')
+        else:
+            self.image.fill('red')
+
         self.rect = self.image.get_rect()
 
         self.rect.center = pos
 
-        self.speed = 10
+        self.speed = randint(5, 15)
 
         self.direction = Vector2(target_pos) - Vector2(pos)
 
@@ -75,4 +84,35 @@ class Bullet(Sprite):
 
         if self.rect.colliderect(self.player.rect):
             self.player.health -= 1
+            self.kill()
+
+
+class Item(Sprite):
+    def __init__(self, pos, target_pos, spawner, *group):
+        super().__init__(*group)
+        self.spawner = spawner
+        self.player = spawner.player
+        self.screen_rect = self.spawner.screen.get_rect()
+
+        self.image = Surface((30, 30))
+        self.image.fill('green')
+        self.rect = self.image.get_rect()
+
+        self.rect.center = pos
+
+        self.speed = randint(1, 10)
+
+        self.direction = Vector2(target_pos) - Vector2(pos)
+
+        if self.direction.length() > 0:
+            self.direction = self.direction.normalize()
+
+    def update(self, dt):
+        self.rect.centerx += self.direction.x * self.speed * dt
+        self.rect.centery += self.direction.y * self.speed * dt
+
+        if not self.rect.colliderect(self.screen_rect):
+            self.kill()
+
+        if self.rect.colliderect(self.player.rect):
             self.kill()

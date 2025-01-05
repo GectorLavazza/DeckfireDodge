@@ -5,8 +5,10 @@ from time import time
 
 from bullets import BulletSpawner
 from player import Player
-from settings import SW, SH
+from settings import SW, SH, CENTER
 from ui import Text
+
+from card import Card
 
 
 def main():
@@ -26,6 +28,12 @@ def main():
     player_g = pygame.sprite.Group()
     player = Player(player_g)
     bullet_spawner = BulletSpawner(screen, player)
+
+    cards_g = pygame.sprite.Group()
+    for i in range(4):
+        pos = 56 + (250 + 56) * i, 500
+        Card(pos, player, screen, cards_g)
+
 
     health = Text(screen, (0, 0), 50)
     timer = Text(screen, (SW, 0), 50, right_align=True)
@@ -76,16 +84,18 @@ def main():
 
         screen.fill('black')
 
-        player_g.draw(screen)
+        # player_g.draw(screen)
+        cards_g.draw(screen)
 
-        player_g.update(dt)
-        bullet_spawner.update(dt)
+        # player_g.update(dt)
+        # bullet_spawner.update(dt)
+        cards_g.update(dt)
 
         if player.health > 0:
             t = round(time() - st, 1)
 
         health.update(player.health)
-        timer.update(t)
+        # timer.update(t)
 
         pygame.display.flip()
         clock.tick()
