@@ -34,13 +34,16 @@ class Text:
 
 
 class StaticText:
-    def __init__(self, message, surface, pos, font_size, color='white', center_align=False, right_align=False):
+    def __init__(self, message, surface, pos, font_size, color='white', center_align=False, right_align=False, split=False):
         self.surface = surface
         self.font = Font('assets/fonts/PixelOperator8.ttf', font_size)
         self.pos = pos
         self.color = color
         self.center_align = center_align
         self.right_align = right_align
+
+        if split:
+            msg = str(message).split()
 
         self.render = self.font.render(str(message), True, self.color)
         self.rect = self.render.get_rect()

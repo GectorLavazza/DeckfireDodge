@@ -94,7 +94,7 @@ def main():
         if player.health > 0:
             t = round(time() - st, 1)
 
-        health.update(player.health)
+        # health.update(player.health)
         # timer.update(t)
 
         pygame.display.flip()
