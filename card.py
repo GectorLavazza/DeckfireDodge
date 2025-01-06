@@ -22,6 +22,11 @@ class CardManager:
     def new_game(self, turn):
         self.turn = turn
 
+        for c in self.player_cards_g.sprites():
+            c.starting = True
+        for c in self.bullets_cards_g.sprites():
+            c.starting = True
+
         cards = sample(VARIANTS, CARDS_AMOUNT * 2)
         self.player_cards = cards[:4]
         self.player_abilities = sample(PLAYER_ABILITIES, CARDS_AMOUNT)
@@ -41,6 +46,10 @@ class CardManager:
     def create_player_cards(self):
         for i in range(CARDS_AMOUNT):
             pos = EDGE_OFFSET + OFFSET * i + CARD_W * i, SH - CARD_H // 4 * 3
+
+            if any([c.rect.x == pos[0] for c in self.player_cards_g.sprites()]):
+                continue
+
             PlayerCard(pos, self.player, self.screen,
                        self.player_cards[i][0], self.player_cards[i][1],
                        self.player_abilities[i],
@@ -49,6 +58,9 @@ class CardManager:
     def create_bullet_cards(self):
         for i in range(CARDS_AMOUNT):
             pos = EDGE_OFFSET + OFFSET * i + CARD_W * i, 0 - CARD_H // 4
+
+            if any([c.rect.x == pos[0] for c in self.bullets_cards_g.sprites()]):
+                continue
 
             BulletCard(pos, self.player, self.screen,
                        self.bullet_cards[i][0], self.bullet_cards[i][1],
@@ -148,17 +160,23 @@ class PlayerCard(Sprite):
         self.speed = 5
 
         self.starting = True
+        self.new = True
 
     def update(self, dt):
         if self.starting:
-            self.rect.y -= self.speed * dt * 2 if self.rect.y >= self.pos[
+            if self.new:
+                spd = self.speed * 1.5
+            else:
+                spd = self.speed * 3
+            self.rect.y -= spd * dt if self.rect.y >= self.pos[
                 1] else 0
             if self.rect.y <= self.pos[1]:
                 self.starting = False
+                if self.new:
+                    self.new = False
+
         elif self.card_manager.ending:
             self.rect.y += self.speed * dt * 2 if self.rect.y <= SH else 0
-            if self.rect.y >= SH:
-                self.kill()
         else:
             mouse_pos = mouse.get_pos()
             if self.rect.collidepoint(mouse_pos):
@@ -210,17 +228,22 @@ class BulletCard(Sprite):
 
         self.starting = True
         self.pressed = False
+        self.new = True
 
     def update(self, dt):
         if self.starting:
-            self.rect.y += self.speed * dt * 2 if self.rect.y <= self.pos[
+            if self.new:
+                spd = self.speed * 1.5
+            else:
+                spd = self.speed * 3
+            self.rect.y += spd * dt if self.rect.y <= self.pos[
                 1] else 0
             if self.rect.y >= self.pos[1]:
                 self.starting = False
+                if self.new:
+                    self.new = False
         elif self.card_manager.ending:
             self.rect.y -= self.speed * dt * 2 if self.rect.y >= 0 - CARD_H else 0
-            if self.rect.y <= 0 - CARD_H:
-                self.kill()
         else:
             mouse_pos = mouse.get_pos()
             if self.rect.collidepoint(mouse_pos):
