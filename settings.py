@@ -1,7 +1,8 @@
+from itertools import product
+
 SW, SH = 1280, 720
 CENTER = SW // 2, SH // 2
 
-SUITS = ('Diamonds', 'Hearts', 'Spears', 'Clubs')
 COLORS = {
     'Diamonds': 'red',
     'Hearts': 'red',
@@ -9,7 +10,10 @@ COLORS = {
     'Clubs': 'black'
 }
 
+SUITS = ('Diamonds', 'Hearts', 'Spears', 'Clubs')
 CARDS = ('6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
+VARIANTS = list(product(SUITS, CARDS))
+
 PLAYER_ABILITIES = ('dash', 'sprint', 'shield',
                     'heal', '- speed', '- frequency',
                     'small bullets', 'small player')

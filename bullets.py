@@ -7,11 +7,12 @@ from settings import SW, SH
 
 
 class BulletSpawner:
-    def __init__(self, screen, player):
+    def __init__(self, screen, player, card_manager):
         self.screen = screen
         self.group = Group()
 
         self.player = player
+        self.card_manager = card_manager
 
         self.max_tick = 10
         self.tick = self.max_tick
@@ -58,10 +59,12 @@ class Bullet(Sprite):
         self.spawner = spawner
         self.player = spawner.player
         self.screen_rect = self.spawner.screen.get_rect()
+        self.special = False
 
         self.image = Surface((20, 20))
         if randint(1, 10) == 1:
             self.image.fill('purple')
+            self.special = True
         else:
             self.image.fill('red')
 
@@ -85,6 +88,8 @@ class Bullet(Sprite):
 
         if self.rect.colliderect(self.player.rect):
             self.player.health -= 1
+            if self.special:
+                self.spawner.card_manager.new_game('bullets')
             self.kill()
 
 
@@ -116,4 +121,5 @@ class Item(Sprite):
             self.kill()
 
         if self.rect.colliderect(self.player.rect):
+            self.spawner.card_manager.new_game('player')
             self.kill()

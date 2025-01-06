@@ -27,8 +27,8 @@ def main():
 
     player_g = pygame.sprite.Group()
     player = Player(player_g)
-    bullet_spawner = BulletSpawner(screen, player)
     card_manager = CardManager(screen, player)
+    bullet_spawner = BulletSpawner(screen, player, card_manager)
 
 
     health = Text(screen, (0, 0), 50)
@@ -67,10 +67,10 @@ def main():
                     player.is_sprinting = True
 
                 if event.key == pygame.K_r:
-                    card_manager.new_game()
+                    if not card_manager.playing:
+                        card_manager.new_game('bullets')
                 if event.key == pygame.K_f:
-                    card_manager.ending = True
-                    card_manager.playing = False
+                    card_manager.finish()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
