@@ -21,9 +21,10 @@ class BulletSpawner:
 
     def update(self, dt):
         self.group.update(dt)
-        self.group.draw(self.screen)
-
         self.handle_tick(dt)
+
+    def draw(self):
+        self.group.draw(self.screen)
 
     def handle_tick(self, dt):
         self.tick -= dt

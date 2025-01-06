@@ -8,7 +8,7 @@ from player import Player
 from settings import SW, SH, CENTER
 from ui import Text
 
-from card import Card
+from card import CardManager
 
 
 def main():
@@ -28,11 +28,7 @@ def main():
     player_g = pygame.sprite.Group()
     player = Player(player_g)
     bullet_spawner = BulletSpawner(screen, player)
-
-    cards_g = pygame.sprite.Group()
-    for i in range(4):
-        pos = 56 + (250 + 56) * i, 500
-        Card(pos, player, screen, cards_g)
+    card_manager = CardManager(screen, player)
 
 
     health = Text(screen, (0, 0), 50)
@@ -70,6 +66,12 @@ def main():
                 if event.key == pygame.K_LSHIFT:
                     player.is_sprinting = True
 
+                if event.key == pygame.K_r:
+                    card_manager.new_game()
+                if event.key == pygame.K_f:
+                    card_manager.ending = True
+                    card_manager.playing = False
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     player.input.y = 0
@@ -83,19 +85,20 @@ def main():
                     player.is_sprinting = False
 
         screen.fill('black')
+        player_g.draw(screen)
+        bullet_spawner.draw()
 
-        # player_g.draw(screen)
-        cards_g.draw(screen)
+        if not card_manager.playing:
+            player_g.update(dt)
+            bullet_spawner.update(dt)
 
-        # player_g.update(dt)
-        # bullet_spawner.update(dt)
-        cards_g.update(dt)
+        card_manager.update(dt)
 
         if player.health > 0:
             t = round(time() - st, 1)
 
-        # health.update(player.health)
-        # timer.update(t)
+        health.update(player.health)
+        timer.update(t)
 
         pygame.display.flip()
         clock.tick()

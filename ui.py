@@ -34,7 +34,8 @@ class Text:
 
 
 class StaticText:
-    def __init__(self, message, surface, pos, font_size, color='white', center_align=False, right_align=False, split=False):
+    def __init__(self, message, surface, pos, font_size, color='white',
+                 center_align=False, right_align=False, wrapping=False):
         self.surface = surface
         self.font = Font('assets/fonts/PixelOperator8.ttf', font_size)
         self.pos = pos
@@ -42,19 +43,37 @@ class StaticText:
         self.center_align = center_align
         self.right_align = right_align
 
-        if split:
+        if wrapping:
             msg = str(message).split()
+            for i in range(len(msg)):
 
-        self.render = self.font.render(str(message), True, self.color)
-        self.rect = self.render.get_rect()
+                word = msg[i]
+                self.render = self.font.render(word, True, self.color)
+                self.rect = self.render.get_rect()
 
-        if self.center_align:
-            self.pos = (pos[0] - self.render.get_width() // 2,
-                   pos[1])
-        elif self.right_align:
-            self.pos = (pos[0] - self.render.get_width(),
-                   pos[1])
+                offset = self.rect.centery - len(msg) * self.rect.h // 2
+                if self.center_align:
+                    self.pos = (pos[0] - self.render.get_width() // 2,
+                                pos[1] + self.rect.h * i + offset)
+                elif self.right_align:
+                    self.pos = (pos[0] - self.render.get_width(),
+                                pos[1] + self.rect.h * i + offset)
+                else:
+                    self.pos = pos[0], pos[1] + self.rect.h * i + offset
+
+                self.surface.blit(self.render, self.pos)
+
         else:
-            self.pos = pos
+            self.render = self.font.render(str(message), True, self.color)
+            self.rect = self.render.get_rect()
 
-        self.surface.blit(self.render, self.pos)
+            if self.center_align:
+                self.pos = (pos[0] - self.render.get_width() // 2,
+                       pos[1])
+            elif self.right_align:
+                self.pos = (pos[0] - self.render.get_width(),
+                       pos[1])
+            else:
+                self.pos = pos
+
+            self.surface.blit(self.render, self.pos)
