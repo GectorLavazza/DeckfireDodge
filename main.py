@@ -20,7 +20,6 @@ def main():
 
     clock = pygame.time.Clock()
 
-
     last_time = time()
 
     running = 1
@@ -30,9 +29,9 @@ def main():
     card_manager = CardManager(screen, player)
     bullet_spawner = BulletSpawner(screen, player, card_manager)
 
-
     health = Text(screen, (0, 0), 50)
     timer = Text(screen, (SW, 0), 50, right_align=True)
+    turn = Text(screen, CENTER, 50, center_align=True)
 
     st = time()
 
@@ -91,6 +90,9 @@ def main():
         if not card_manager.playing:
             player_g.update(dt)
             bullet_spawner.update(dt)
+
+        if card_manager.playing:
+            turn.update(card_manager.turn)
 
         card_manager.update(dt)
 

@@ -19,6 +19,9 @@ class CardManager:
         self.max_turn_timer = 120
         self.turn_timer = self.max_turn_timer
 
+        self.current_player_abilities = []
+        self.current_bullet_abilities = []
+
     def new_game(self, turn):
         self.turn = turn
 
@@ -27,7 +30,11 @@ class CardManager:
         for c in self.bullets_cards_g.sprites():
             c.starting = True
 
-        cards = sample(VARIANTS, CARDS_AMOUNT * 2)
+        leftover_cards = [tuple(s.card[:2]) for s in
+                          self.player_cards_g.sprites() + self.bullets_cards_g.sprites()]
+        variants = [v for v in VARIANTS if v not in leftover_cards]
+
+        cards = sample(variants, CARDS_AMOUNT * 2)
         self.player_cards = cards[:4]
         self.player_abilities = sample(PLAYER_ABILITIES, CARDS_AMOUNT)
 
@@ -47,7 +54,8 @@ class CardManager:
         for i in range(CARDS_AMOUNT):
             pos = EDGE_OFFSET + OFFSET * i + CARD_W * i, SH - CARD_H // 4 * 3
 
-            if any([c.rect.x == pos[0] for c in self.player_cards_g.sprites()]):
+            if any([c.rect.x == pos[0] for c in
+                    self.player_cards_g.sprites()]):
                 continue
 
             PlayerCard(pos, self.player, self.screen,
@@ -59,7 +67,8 @@ class CardManager:
         for i in range(CARDS_AMOUNT):
             pos = EDGE_OFFSET + OFFSET * i + CARD_W * i, 0 - CARD_H // 4
 
-            if any([c.rect.x == pos[0] for c in self.bullets_cards_g.sprites()]):
+            if any([c.rect.x == pos[0] for c in
+                    self.bullets_cards_g.sprites()]):
                 continue
 
             BulletCard(pos, self.player, self.screen,
@@ -78,18 +87,22 @@ class CardManager:
             self.play(dt)
 
     def play(self, dt):
-        bullets_variatns = self.get_variants(self.bullets_cards_g, self.player_cards_g)
-        player_variatns = self.get_variants(self.player_cards_g, self.bullets_cards_g)
+        bullets_variatns = self.get_variants(self.bullets_cards_g,
+                                             self.player_cards_g)
+        player_variatns = self.get_variants(self.player_cards_g,
+                                            self.bullets_cards_g)
 
-        if (not any(bullets_variatns.values())
-            and not any(player_variatns.values())):
-            self.finish()
+        if not any(bullets_variatns.values()) and not any(
+                player_variatns.values()):
+            self.turn = 'None'
 
-        elif not any(bullets_variatns.values()) and any(player_variatns.values()):
+        elif not any(bullets_variatns.values()) and any(
+                player_variatns.values()):
             if self.turn == 'bullets':
                 self.turn = 'player'
 
-        elif not any(player_variatns.values()) and any(bullets_variatns.values()):
+        elif not any(player_variatns.values()) and any(
+                bullets_variatns.values()):
             if self.turn == 'player':
                 self.turn = 'bullets'
 
@@ -99,7 +112,6 @@ class CardManager:
                 self.take_turn()
                 self.turn = 'player'
                 self.turn_timer = self.max_turn_timer
-
 
     def beat(self, playing, beating):
         sp, cp = playing[:2]
@@ -111,7 +123,8 @@ class CardManager:
         return False
 
     def take_turn(self):
-        for card, variants in self.get_variants(self.bullets_cards_g, self.player_cards_g).items():
+        for card, variants in self.get_variants(self.bullets_cards_g,
+                                                self.player_cards_g).items():
             if not variants:
                 continue
             else:
@@ -193,7 +206,6 @@ class PlayerCard(Sprite):
     def take_turn(self):
         if self.card_manager.turn == 'player':
             self.card_manager.playing_card = self
-
 
 
 class BulletCard(Sprite):

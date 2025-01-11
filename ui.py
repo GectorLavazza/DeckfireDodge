@@ -2,7 +2,8 @@ from pygame.font import Font
 
 
 class Text:
-    def __init__(self, screen, pos, font_size, color='white', center_align=False, right_align=False):
+    def __init__(self, screen, pos, font_size, color='white',
+                 center_align=False, right_align=False):
         self.screen = screen
         self.font = Font('assets/fonts/PixelOperator8.ttf', font_size)
         self.pos = pos
@@ -17,13 +18,12 @@ class Text:
 
     def update(self, message):
         if self.prev_message != message:
-
             self.render = self.font.render(str(message), True, self.color)
             self.rect = self.render.get_rect()
 
         if self.center_align:
             pos = (self.pos[0] - self.render.get_width() // 2,
-                   self.pos[1])
+                   self.pos[1] - self.render.get_height() // 2)
         elif self.right_align:
             pos = (self.pos[0] - self.render.get_width(),
                    self.pos[1])
@@ -69,10 +69,10 @@ class StaticText:
 
             if self.center_align:
                 self.pos = (pos[0] - self.render.get_width() // 2,
-                       pos[1])
+                            pos[1])
             elif self.right_align:
                 self.pos = (pos[0] - self.render.get_width(),
-                       pos[1])
+                            pos[1])
             else:
                 self.pos = pos
 

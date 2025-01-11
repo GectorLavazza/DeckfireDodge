@@ -47,7 +47,8 @@ class BulletSpawner:
             self.create_bullet(pos, (choice(self.x), choice(self.y)))
 
     def create_bullet(self, pos, target_pos):
-        if randint(1, 100) == 1 and not any([type(s) == Item for s in self.group]):
+        if randint(1, 100) == 1 and not any(
+                [type(s) == Item for s in self.group]):
             Item(pos, target_pos, self, self.group)
         else:
             Bullet(pos, target_pos, self, self.group)
