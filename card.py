@@ -22,6 +22,9 @@ class CardManager:
         self.current_player_abilities = []
         self.current_bullet_abilities = []
 
+        self.bullets_speed_boost = 0
+        self.bullets_frequency = 1
+
     def new_game(self, turn):
         self.turn = turn
 
@@ -141,6 +144,22 @@ class CardManager:
         return res
 
     def finish(self):
+        self.current_player_abilities = [c.card[-1] for c in self.player_cards_g.sprites()]
+        self.current_bullet_abilities = [c.card[-1] for c in self.bullets_cards_g.sprites()]
+
+        if '+ bullets speed' in self.current_bullet_abilities:
+            self.bullets_speed_boost += 5
+        if '- bullets speed' in self.current_player_abilities:
+            self.bullets_speed_boost -= 5 if self.bullets_speed_boost - 5 >= 0 else 0
+
+        if '+ bullets frequency' in self.current_bullet_abilities:
+            self.bullets_frequency += 0.1
+        if '- bullets frequency' in self.current_player_abilities:
+            self.bullets_frequency -= 0.1 if self.bullets_frequency - 0.1 > 0 else 0
+
+        self.player.abilities = self.current_player_abilities
+        self.player.apply_abilities()
+
         self.ending = True
         self.playing = False
 

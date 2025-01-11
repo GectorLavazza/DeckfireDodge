@@ -15,11 +15,11 @@ CARDS = ('6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
 VARIANTS = list(product(SUITS, CARDS))
 
 PLAYER_ABILITIES = ('dash', 'sprint', 'shield',
-                    'heal', '- speed', '- frequency',
+                    'heal', '- bullets speed', '- bullets frequency',
                     'small bullets', 'small player')
 
 BULLET_ABILITIES = ('random speed', 'targets player',
-                    '+ speed', '2x damage', '+ frequency',
+                    '+ bullets speed', '2x damage', '+ bullets frequency',
                     'big bullets', 'shield breaking')
 
 CARD_W, CARD_H = 200, 280

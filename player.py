@@ -10,6 +10,8 @@ class Player(Sprite):
         self.image = Surface((40, 40))
         self.image.fill('blue')
 
+        self.abilities = []
+
         self.rect = self.image.get_rect()
         self.rect.center = CENTER
 
@@ -27,7 +29,8 @@ class Player(Sprite):
 
     def update(self, dt):
         if self.is_sprinting:
-            self.speed = 15
+            if 'sprint' in self.abilities:
+                self.speed = 15
         else:
             if self.is_dashing:
                 self.dash_tick -= dt
@@ -52,6 +55,23 @@ class Player(Sprite):
             self.rect.centery += self.velocity.y
 
     def dash(self):
-        self.speed = 50
-        self.is_dashing = True
-        self.dash_tick = 5
+        if 'dash' in self.abilities:
+            self.speed = 50
+            self.is_dashing = True
+            self.dash_tick = 5
+
+    def apply_abilities(self):
+        center = self.rect.center
+        if 'small player' in self.abilities:
+            self.image = Surface((20, 20))
+            self.image.fill('blue')
+            self.rect = self.image.get_rect()
+            self.rect.center = center
+        else:
+            self.image = Surface((40, 40))
+            self.image.fill('blue')
+            self.rect = self.image.get_rect()
+            self.rect.center = center
+
+        if 'heal' in self.abilities:
+            self.health = self.max_health

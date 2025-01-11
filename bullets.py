@@ -13,6 +13,9 @@ class BulletSpawner:
 
         self.player = player
         self.card_manager = card_manager
+        self.abilities = self.card_manager.current_bullet_abilities
+        self.bullets_speed_boost = self.card_manager.bullets_speed_boost
+        self.bullets_frequency = self.card_manager.bullets_frequency
 
         self.max_tick = 10
         self.tick = self.max_tick
@@ -23,6 +26,9 @@ class BulletSpawner:
     def update(self, dt):
         self.group.update(dt)
         self.handle_tick(dt)
+        self.abilities = self.card_manager.current_bullet_abilities
+        self.bullets_speed_boost = self.card_manager.bullets_speed_boost
+        self.bullets_frequency = self.card_manager.bullets_frequency
 
     def draw(self):
         self.group.draw(self.screen)
@@ -51,18 +57,33 @@ class BulletSpawner:
                 [type(s) == Item for s in self.group]):
             Item(pos, target_pos, self, self.group)
         else:
-            Bullet(pos, target_pos, self, self.group)
+            if 'targets player' in self.abilities:
+                tp = self.player.rect.center
+            else:
+                tp = target_pos
+            Bullet(pos, tp, self, self.group)
 
 
 class Bullet(Sprite):
     def __init__(self, pos, target_pos, spawner, *group):
         super().__init__(*group)
         self.spawner = spawner
+
+        speed_boost = self.spawner.bullets_speed_boost
+
         self.player = spawner.player
         self.screen_rect = self.spawner.screen.get_rect()
         self.special = False
 
-        self.image = Surface((20, 20))
+        if 'big bullets' in self.spawner.abilities and 'small bullets' not in self.spawner.player.abilities:
+            size = (30, 30)
+        elif 'big bullets' not in self.spawner.abilities and 'small bullets' in self.spawner.player.abilities:
+            size = (10, 10)
+        else:
+            size = (20, 20)
+
+        self.image = Surface(size)
+
         if randint(1, 10) == 1:
             self.image.fill('purple')
             self.special = True
@@ -73,7 +94,10 @@ class Bullet(Sprite):
 
         self.rect.center = pos
 
-        self.speed = randint(5, 15)
+        if 'random speed' in self.spawner.abilities:
+            self.speed = randint(5, 15) + speed_boost
+        else:
+            self.speed = 10 + speed_boost
 
         self.direction = Vector2(target_pos) - Vector2(pos)
 

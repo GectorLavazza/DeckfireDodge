@@ -69,7 +69,8 @@ def main():
                     if not card_manager.playing:
                         card_manager.new_game('bullets')
                 if event.key == pygame.K_f:
-                    card_manager.finish()
+                    if card_manager.playing:
+                        card_manager.finish()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
